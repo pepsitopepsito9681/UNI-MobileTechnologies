@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CarListApp.Maui.Services;
+using CarListApp.Maui.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace CarListApp.Maui
 {
@@ -15,9 +17,9 @@ namespace CarListApp.Maui
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-#if DEBUG
-    		builder.Logging.AddDebug();
-#endif
+            builder.Services.AddSingleton<CarService>();
+            builder.Services.AddSingleton<CarListViewModel>();
+            builder.Services.AddSingleton<MainPage>();
 
             return builder.Build();
         }
