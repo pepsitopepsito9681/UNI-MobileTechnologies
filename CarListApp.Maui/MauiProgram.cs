@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CarListApp.Maui.Services;
+using CarListApp.Maui.ViewModels;
+using CarListApp.Maui.Views;
+using Microsoft.Extensions.Logging;
 
 namespace CarListApp.Maui
 {
@@ -15,9 +18,15 @@ namespace CarListApp.Maui
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-#if DEBUG
-    		builder.Logging.AddDebug();
-#endif
+            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "cars.db1");
+
+            builder.Services.AddSingleton(s=> ActivatorUtilities.CreateInstance<CarService>(s, dbPath));
+
+            builder.Services.AddSingleton<CarListViewModel>();
+            builder.Services.AddTransient<CarDetailsViewModel>();
+
+            builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddTransient<CarDetailsPage>();
 
             return builder.Build();
         }
