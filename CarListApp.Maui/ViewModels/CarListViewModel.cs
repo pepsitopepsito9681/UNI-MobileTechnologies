@@ -1,6 +1,9 @@
-﻿using CarListApp.Maui.Models;
+using CarListApp.Maui.Models;
 using CarListApp.Maui.Services;
+
 using CarListApp.Maui.Views;
+
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -62,11 +65,11 @@ namespace CarListApp.Maui.ViewModels
         [RelayCommand]
         async Task GetCarDetails(Car car)
         {
-            if (car == null) return;
+            if(car == null) return;
 
-            await Shell.Current.GoToAsync(nameof(CarDetailsPage), true, new Dictionary<string, object> 
+            await Shell.Current.GoToAsync(nameof(CarDetailsPage), true, new Dictionary<string, object>
             {
-                {nameof(Car), car}
+                {nameof(Car), car }
             });
         }
     }

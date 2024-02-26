@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CarListApp.Maui.MainPage"
@@ -16,8 +16,12 @@
                         <Grid Padding="10">
                             <Frame HeightRequest="90">
                                 <Frame.GestureRecognizers>
+
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:CarListViewModel}}, Path=GetCarDetailsCommand }" 
                                                           CommandParameter="{Binding .}" />
+
+                                    <TapGestureRecognizer Command="" CommandParameter="" />
+
                                 </Frame.GestureRecognizers>
                                 <HorizontalStackLayout Padding="10" Spacing="5">
                                     <Label Text="{Binding Make}"></Label>
