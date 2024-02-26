@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using System.Web;
 
 namespace CarListApp.Maui.ViewModels
@@ -22,5 +23,17 @@ namespace CarListApp.Maui.ViewModels
             Id = Convert.ToInt32(HttpUtility.UrlDecode(query["Id"].ToString()));
             Car=App.CarService.GetCar(Id);
         }
+
+
+namespace CarListApp.Maui.ViewModels
+{
+    [QueryProperty(nameof(Car), "Car")]
+    public partial class CarDetailsViewModel:BaseViewModel
+    {
+        [ObservableProperty]
+        Car car;
+
+        
+
     }
 }

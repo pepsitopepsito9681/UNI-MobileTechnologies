@@ -10,10 +10,16 @@ namespace CarListApp.Maui.Services
 {
     public class CarService
     {
+
         SQLiteConnection conn;
         string _dbPath;
         public string StatusMessage;
         int result = 0;
+
+        private SQLiteConnection conn;
+        string _dbPath;
+        string StatusMessage;
+
         public CarService(string dbPath)
         {
             _dbPath=dbPath;
@@ -28,6 +34,10 @@ namespace CarListApp.Maui.Services
         public List<Car> GetCars()
         {
             
+
+
+
+
             try
             {
                 Init();
@@ -39,6 +49,7 @@ namespace CarListApp.Maui.Services
             }
 
             return new List<Car>();
+
         }
         public Car GetCar(int id)
         {
@@ -84,6 +95,7 @@ namespace CarListApp.Maui.Services
             {
                 StatusMessage = "Failed to Insert data.";
             }
+
         }
     }
 }

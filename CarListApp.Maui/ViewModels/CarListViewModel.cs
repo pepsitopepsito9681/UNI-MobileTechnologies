@@ -1,6 +1,21 @@
+
 ﻿using CarListApp.Maui.Models;
 using CarListApp.Maui.Services;
 using CarListApp.Maui.Views;
+
+
+﻿using CarListApp.Maui.Models;
+using CarListApp.Maui.Services;
+using CarListApp.Maui.Views;
+
+using CarListApp.Maui.Models;
+using CarListApp.Maui.Services;
+
+using CarListApp.Maui.Views;
+
+
+
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -9,7 +24,14 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+
 using System.Text.Json;
+
+
+using System.Text.Json;
+
+
+
 using System.Threading.Tasks;
 
 
@@ -19,20 +41,30 @@ namespace CarListApp.Maui.ViewModels
     {
         private readonly CarService carService;
         public ObservableCollection<Car> Cars { get; private set; } = new();
+
         public CarListViewModel()
         {
             Title = "Car List";
             GetCarList().Wait();
+
+        public CarListViewModel(CarService carService)
+        {
+            Title = "Car List";
+            this.carService = carService;
+
         }
 
         [ObservableProperty]
         bool isRefreshing;
+
         [ObservableProperty]
         string make;
         [ObservableProperty]
         string model;
         [ObservableProperty]
         string vin;
+
+
 
         [RelayCommand]
         async Task GetCarList()
@@ -48,11 +80,25 @@ namespace CarListApp.Maui.ViewModels
                 {
                     Cars.Clear();
                 }
+
                 var cars=App.CarService.GetCars();
+
+
+                var cars=App.CarService.GetCars();
+
+                var cars=carService.GetCars();
+
+
                     foreach (var car in cars)
                     {
                         Cars.Add(car);
                     }
+
+
+
+
+
+
 
                 
             }
@@ -68,6 +114,7 @@ namespace CarListApp.Maui.ViewModels
             }
         }
         [RelayCommand]
+
         async Task GetCarDetails(int id)
         {
             if (id ==0) return;
@@ -115,6 +162,24 @@ namespace CarListApp.Maui.ViewModels
         async Task UpdateCar(int id)
         {
             return;
+
+        async Task GetCarDetails(Car car)
+        {
+
+            if (car == null) return;
+
+            await Shell.Current.GoToAsync(nameof(CarDetailsPage), true, new Dictionary<string, object> 
+            {
+                {nameof(Car), car}
+
+            if(car == null) return;
+
+            await Shell.Current.GoToAsync(nameof(CarDetailsPage), true, new Dictionary<string, object>
+            {
+                {nameof(Car), car }
+
+            });
+
         }
     }
 }
