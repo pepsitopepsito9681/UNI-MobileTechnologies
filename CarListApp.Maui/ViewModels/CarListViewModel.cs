@@ -1,21 +1,6 @@
-
-﻿using CarListApp.Maui.Models;
-using CarListApp.Maui.Services;
-using CarListApp.Maui.Views;
-
-
-﻿using CarListApp.Maui.Models;
-using CarListApp.Maui.Services;
-using CarListApp.Maui.Views;
-
 using CarListApp.Maui.Models;
 using CarListApp.Maui.Services;
-
 using CarListApp.Maui.Views;
-
-
-
-
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -24,88 +9,58 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-
 using System.Text.Json;
-
-
-using System.Text.Json;
-
-
-
 using System.Threading.Tasks;
-
 
 namespace CarListApp.Maui.ViewModels
 {
-    public partial class CarListViewModel:BaseViewModel
+    public partial class CarListViewModel : BaseViewModel
     {
-        private readonly CarService carService;
+        const string editButtonText = "Update Car";
+        const string createButtonText = "Add Car";
+        
+        string message = string.Empty;
         public ObservableCollection<Car> Cars { get; private set; } = new();
 
         public CarListViewModel()
         {
             Title = "Car List";
-            GetCarList().Wait();
-
-        public CarListViewModel(CarService carService)
-        {
-            Title = "Car List";
-            this.carService = carService;
-
+            AddEditButtonText = createButtonText;
+            
         }
 
         [ObservableProperty]
         bool isRefreshing;
-
         [ObservableProperty]
         string make;
         [ObservableProperty]
         string model;
         [ObservableProperty]
         string vin;
-
-
+        [ObservableProperty]
+        string addEditButtonText;
+        [ObservableProperty]
+        int carId;
 
         [RelayCommand]
-        async Task GetCarList()
+        public async Task GetCarList()
         {
-            if (IsLoading)
-            {
-                return;
-            }
+            if (IsLoading) return;
             try
             {
                 IsLoading = true;
-                if (Cars.Any())
-                {
-                    Cars.Clear();
-                }
+                if (Cars.Any()) Cars.Clear();
 
-                var cars=App.CarService.GetCars();
+                var cars = new List<Car>();
 
+                cars = App.CarService.GetCars();
 
-                var cars=App.CarService.GetCars();
-
-                var cars=carService.GetCars();
-
-
-                    foreach (var car in cars)
-                    {
-                        Cars.Add(car);
-                    }
-
-
-
-
-
-
-
-                
+                foreach (var car in cars) Cars.Add(car);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Unable to get cars: {0}", ex.Message);
-                await Shell.Current.DisplayAlert("Error", "Failed to retrive list of cars.", "Ok");
+                Debug.WriteLine($"Unable to get cars: {ex.Message}");
+                await ShowAlert("Failed to retrive list of cars.");
             }
             finally
             {
@@ -113,73 +68,102 @@ namespace CarListApp.Maui.ViewModels
                 IsRefreshing = false;
             }
         }
-        [RelayCommand]
 
+        [RelayCommand]
         async Task GetCarDetails(int id)
         {
-            if (id ==0) return;
+            if (id == 0) return;
 
-            await Shell.Current.GoToAsync($"{nameof(CarDetailsPage)}?Id={id}",true);
+            await Shell.Current.GoToAsync($"{nameof(CarDetailsPage)}?Id={id}", true);
         }
+
         [RelayCommand]
-        async Task AddCar()
+        async Task SaveCar()
         {
             if (string.IsNullOrEmpty(Make) || string.IsNullOrEmpty(Model) || string.IsNullOrEmpty(Vin))
             {
-                await Shell.Current.DisplayAlert("Invalid Data", "Please insert valid data", "Ok");
+                await ShowAlert("Please insert valid data");
                 return;
             }
+
             var car = new Car
             {
+                Id = CarId,
                 Make = Make,
                 Model = Model,
                 Vin = Vin
             };
 
-            App.CarService.AddCar(car);
-            await Shell.Current.DisplayAlert("Info", App.CarService.StatusMessage, "Ok");
-            await GetCarList();
-        }
-        [RelayCommand]
-        async Task DeleteCar(int id)
-        {
-            if (id ==0)
+            if (CarId != 0)
             {
-                await Shell.Current.DisplayAlert("Invalid Record", "Please try again", "Ok");
-                return;
-            }
-            var result=App.CarService.DeleteCar(id);
-            if (result==0)
-            {
-                await Shell.Current.DisplayAlert("Failed", "Please insert valid data", "Ok");
+                
+                App.CarService.UpdateCar(car);
+                message = App.CarService.StatusMessage;
             }
             else
             {
-                await Shell.Current.DisplayAlert("Deletion Successful", "Record Removed Successfully", "Ok");
-                await GetCarList();
+                App.CarService.AddCar(car);
+                message = App.CarService.StatusMessage;
             }
+
+            await ShowAlert(message);
+            await GetCarList();
+            await ClearForm();
         }
+
+        [RelayCommand]
+        async Task DeleteCar(int id)
+        {
+            if (id == 0)
+            {
+                await ShowAlert("Please try again");
+                return;
+            }
+            App.CarService.DeleteCar(id);
+            message = App.CarService.StatusMessage;
+            await ShowAlert(message);
+            await GetCarList();
+        }
+
+        [RelayCommand]
         async Task UpdateCar(int id)
         {
+            AddEditButtonText = editButtonText;
+            await ShowAlert(message);
+            await GetCarList();
             return;
+            
+        }
 
-        async Task GetCarDetails(Car car)
+        [RelayCommand]
+        async Task SetEditMode(int id)
         {
+            AddEditButtonText = editButtonText;
+            CarId = id;
+            Car car;
+            car=App.CarService.GetCar(CarId);
+            Make = car.Make;
+            Model = car.Model;
+            Vin = car.Vin;
+            await ShowAlert(message);
+            await GetCarList();
+        }
 
-            if (car == null) return;
+        [RelayCommand]
+        async Task ClearForm()
+        {
+            AddEditButtonText = createButtonText;
+            CarId = 0;
+            Make = string.Empty;
+            Model = string.Empty;
+            Vin = string.Empty;
+            await ShowAlert(message);
+            await GetCarList();
+        }
 
-            await Shell.Current.GoToAsync(nameof(CarDetailsPage), true, new Dictionary<string, object> 
-            {
-                {nameof(Car), car}
-
-            if(car == null) return;
-
-            await Shell.Current.GoToAsync(nameof(CarDetailsPage), true, new Dictionary<string, object>
-            {
-                {nameof(Car), car }
-
-            });
-
+        private static async Task ShowAlert(string message)
+        {
+            await Shell.Current.DisplayAlert("Info", message, "Ok");
         }
     }
 }

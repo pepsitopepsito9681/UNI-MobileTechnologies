@@ -1,43 +1,33 @@
 ﻿using CarListApp.Maui.Models;
+
 using SQLite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarListApp.Maui.Services
 {
     public class CarService
     {
-
         SQLiteConnection conn;
         string _dbPath;
         public string StatusMessage;
         int result = 0;
-
-        private SQLiteConnection conn;
-        string _dbPath;
-        string StatusMessage;
-
         public CarService(string dbPath)
         {
-            _dbPath=dbPath;
+            _dbPath = dbPath;
+            
+            
         }
+
         private void Init()
         {
-            if (conn == null) return;
+            if (conn != null)
+                return;
 
             conn = new SQLiteConnection(_dbPath);
             conn.CreateTable<Car>();
         }
+
         public List<Car> GetCars()
         {
-            
-
-
-
-
             try
             {
                 Init();
@@ -49,9 +39,9 @@ namespace CarListApp.Maui.Services
             }
 
             return new List<Car>();
-
         }
-        public Car GetCar(int id)
+
+        public Car? GetCar(int id)
         {
             try
             {
@@ -62,6 +52,7 @@ namespace CarListApp.Maui.Services
             {
                 StatusMessage = "Failed to retrieve data.";
             }
+
             return null;
         }
 
@@ -76,6 +67,7 @@ namespace CarListApp.Maui.Services
             {
                 StatusMessage = "Failed to delete data.";
             }
+
             return 0;
         }
 
@@ -84,18 +76,35 @@ namespace CarListApp.Maui.Services
             try
             {
                 Init();
+                
                 if (car == null)
-                {
                     throw new Exception("Invalid Car Record");
-                }
+                
                 result = conn.Insert(car);
                 StatusMessage = result == 0 ? "Insert Failed" : "Insert Successful";
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 StatusMessage = "Failed to Insert data.";
             }
+        }
 
+        public void UpdateCar(Car car)
+        {
+            try
+            {
+                Init();
+
+                if (car == null)
+                    throw new Exception("Invalid Car Record");
+
+                result = conn.Update(car);
+                StatusMessage = result == 0 ? "Update Failed" : "Update Successful";
+            }
+            catch (Exception)
+            {
+                StatusMessage = "Failed to Update data.";
+            }
         }
     }
 }

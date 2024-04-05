@@ -1,16 +1,24 @@
+
 using CarListApp.Maui.ViewModels;
-
-namespace CarListApp.Maui.Views;
-
-public partial class CarDetailsPage : ContentPage
+using CarListApp.Maui.Services;
+namespace CarListApp.Maui.Views
 {
-	public CarDetailsPage(CarDetailsViewModel carDetailsViewModel)
+
+	public partial class CarDetailsPage : ContentPage
 	{
-		InitializeComponent();
-		BindingContext = carDetailsViewModel;
-	}
-	protected override void OnNavigatedTo(NavigatedToEventArgs args)
-	{
-		base.OnNavigatedTo(args);
-	}
+		private readonly CarDetailsViewModel carDetailsViewModel;
+
+		public CarDetailsPage(CarDetailsViewModel carDetailsViewModel)
+		{
+			InitializeComponent();
+			BindingContext = carDetailsViewModel;
+			this.carDetailsViewModel = carDetailsViewModel;
+
+		}
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await carDetailsViewModel.GetCarData();
+        }
+    }
 }
